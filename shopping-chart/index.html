@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.bootcss.com/vue/2.6.10/vue.common.dev.js"></script>
+  </head>
+  <style>
+      table {
+        border:1px solid #e9e9e9;
+        border-collapse:collapse;
+        border-spacing: 0px;
+      }
+      th, td {
+        border: 1px solid #e9e9e9;
+        padding: 8px 16px;
+      }
+      th {
+          background-color: #f7f7f7;
+          color: #5c6b77;
+          font-weight: 600;
+      }
+  </style>
+  <body>
+    <div id="app">
+        <div v-if="books.length > 0">
+            <table>
+                <thead>
+                    <th></th>
+                    <th>书籍名称</th>
+                    <th>价格</th>
+                    <th>购买数量</th>
+                </thead>
+                <tbody>
+                    <tr v-for="(book, index) in books">
+                        <td v-text="index + 1"></td>
+                        <!-- 插值写法一 -->
+                        <td v-text="book.name"></td>
+                        <!-- 插值写法二 -->
+                        <td>{{book.price | formatPrice(book.price)}}</td>
+                        <td>
+                            <button @click="decrement(index)" :disabled="book.count <= 1">-</button>
+                            {{book.count}}
+                            <button @click="increment(index)">+</button>
+                        </td>
+                        <td>
+                            <button @click="remove(index)">删除</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <section>总价：{{totalPrice | formatPrice(totalPrice)}}</section>
+        </div>
+        <div v-else>购物车为空</div>
+    </div>
+    <script>
+        const app = new Vue({
+            el: "#app",
+            data: function () {
+                return {
+                    books: [
+                        {
+                            name: "数据结构",
+                            price: 50,
+                            count: 1
+                        },
+                        {
+                            name: "计算机组成原理",
+                            price: 60,
+                            count: 1
+                        },
+                        {
+                            name: "计算机操作系统",
+                            price: 70,
+                            count: 1
+                        },
+                        {
+                            name: "计算机网络",
+                            price: 80,
+                            count: 1
+                        }
+                    ]
+                }
+            },
+            computed: {
+                // totalPrice: function () {
+                //     let tp = 0
+                //     for(let book of this.books){
+                //         console.log(book);
+                //         tp = tp + book.price * book.count
+                //     }
+                //     return tp
+                // }
+                totalPrice() {
+                    // let tp = 0
+                    // for(let book of this.books){
+                    //     console.log(book);
+                    //     tp += book.price * book.count
+                    // }
+                    return this.books.reduce((preValue, book) => preValue + book.price * book.count, 0);
+                }
+            },
+            methods: {
+                decrement: function (index) { // method 写法一 
+                    // if(this.books[index].count > 1) this.books[index].count--
+                    this.books[index].count--
+                },
+                increment(index) { // method 写法二
+                    this.books[index].count++
+                },
+                remove(index) {
+                    this.books.splice(index, 1)
+                }
+            },
+            filters: {
+                formatPrice(price) {
+                    return '¥' + price.toFixed(2);
+                }
+            },
+            watch: {
+
+            }
+        })
+    </script>
+  </body>
+</html>
